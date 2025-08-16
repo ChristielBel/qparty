@@ -1,3 +1,7 @@
 <resources>
-    <string name="app_name">qparty</string>
+    <string name="app_name">QParty</string>
+    <string name="start_game_button">🎉 Начать игру</string>
+    <string name="next_button">Далее</string>
+    <string name="restart_button">Заново</string>
+    <string name="welcome_message">Отвечайте на вопросы и узнайте друг друга лучше!</string>
 </resources>
