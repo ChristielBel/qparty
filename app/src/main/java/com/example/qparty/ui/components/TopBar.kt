@@ -1,4 +1,4 @@
-package com.example.qparty
+package com.example.qparty.ui.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.icons.Icons
@@ -14,6 +14,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
+import com.example.qparty.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
