@@ -14,13 +14,17 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
+import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.LightMode
 import com.example.qparty.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopAppBar(
     navController: NavController,
-    showBackButton: Boolean = false
+    showBackButton: Boolean = false,
+    isDarkTheme: Boolean,
+    onToggleTheme: () -> Unit
 ) {
     Column {
         CenterAlignedTopAppBar(
@@ -40,6 +44,15 @@ fun TopAppBar(
                             tint = MaterialTheme.colorScheme.onPrimary
                         )
                     }
+                }
+            },
+            actions = {
+                IconButton(onClick = onToggleTheme) {
+                    Icon(
+                        imageVector = if (isDarkTheme) Icons.Filled.LightMode else Icons.Filled.DarkMode,
+                        contentDescription = if (isDarkTheme) "Светлая тема" else "Тёмная тема",
+                        tint = MaterialTheme.colorScheme.onPrimary
+                    )
                 }
             },
             colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
