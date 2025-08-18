@@ -18,6 +18,10 @@ class QuestionViewModel(application: Application) : AndroidViewModel(application
     private val _currentQuestion = MutableStateFlow<Question?>(questionList.firstOrNull())
     val currentQuestion = _currentQuestion.asStateFlow()
 
+    init {
+        restartGame()
+    }
+
     fun nextQuestion() {
         index++
         if (index < questionList.size) {
@@ -28,7 +32,9 @@ class QuestionViewModel(application: Application) : AndroidViewModel(application
     }
 
     fun restartGame() {
-        questionList = allQuestions.shuffled().toMutableList()
+        questionList = QuestionRepository
+            .loadQuestions(getApplication(), 15)
+            .toMutableList()
         index = 0
         _currentQuestion.value = questionList.firstOrNull()
     }
