@@ -1,9 +1,7 @@
 package com.example.qparty.ui.screens
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.Crossfade
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -12,8 +10,7 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.with
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -37,13 +34,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.res.stringResource
@@ -54,15 +48,47 @@ import androidx.navigation.NavController
 import com.example.qparty.R
 import com.example.qparty.viewmodel.QuestionViewModel
 
+@OptIn(ExperimentalAnimationApi::class)
+@Composable
+fun QuestionCard(text: String?) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp),
+        elevation = CardDefaults.cardElevation(8.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+            contentColor = MaterialTheme.colorScheme.onSurface
+        ),
+        shape = RoundedCornerShape(16.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .defaultMinSize(minHeight = 180.dp)
+                .padding(24.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            AnimatedContent(
+                targetState = text,
+                transitionSpec = {
+                    fadeIn(tween(300)) with fadeOut(tween(300))
+                }
+            ) { targetText ->
+                Text(
+                    text = targetText ?: "",
+                    style = MaterialTheme.typography.headlineMedium,
+                    textAlign = TextAlign.Center,
+                )
+            }
+        }
+    }
+}
+
 @Composable
 fun GameScreen(
     navController: NavController,
     questionViewModel: QuestionViewModel = viewModel()
 ) {
-    LaunchedEffect(Unit) {
-        questionViewModel.restartGame()
-    }
-
     val question by questionViewModel.currentQuestion.collectAsState()
 
     val infiniteTransition = rememberInfiniteTransition(label = "")
@@ -140,45 +166,11 @@ fun GameScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            AnimatedVisibility(
-                visible = question != null,
-                enter = fadeIn(tween(500)) + slideInVertically(initialOffsetY = { it }),
-                exit = fadeOut(tween(500)) + slideOutVertically(targetOffsetY = { -it })
-            ) {
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 8.dp)
-                        .defaultMinSize(minHeight = 120.dp)
-                        .clip(RoundedCornerShape(16.dp))
-                        .animateContentSize(),
-                    elevation = CardDefaults.cardElevation(8.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surface,
-                        contentColor = MaterialTheme.colorScheme.onSurface
-                    ),
-                    shape = RoundedCornerShape(16.dp)
-                ) {
-                    Crossfade(
-                        targetState = question?.text,
-                        animationSpec = tween(600),
-                        label = "crossfadeQuestion"
-                    ) { text ->
-                        Text(
-                            text = text ?: "",
-                            modifier = Modifier.padding(24.dp),
-                            style = MaterialTheme.typography.headlineMedium,
-                            textAlign = TextAlign.Center,
-                            softWrap = true
-                        )
-                    }
-
-                }
+            if (question != null) {
+                QuestionCard(text = question?.text)
             }
 
             Spacer(modifier = Modifier.height(32.dp))
-
-            val scale = remember { Animatable(1f) }
 
             val buttonModifier = Modifier
                 .width(220.dp)
