@@ -1,5 +1,6 @@
 package com.example.qparty.ui.screens
 
+import android.content.res.Configuration
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.LinearEasing
@@ -42,10 +43,12 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.qparty.R
+import com.example.qparty.ui.theme.QpartyTheme
 import com.example.qparty.viewmodel.QuestionViewModel
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -85,12 +88,11 @@ fun QuestionCard(text: String?) {
 }
 
 @Composable
-fun GameScreen(
-    navController: NavController,
-    questionViewModel: QuestionViewModel = viewModel()
-) {
-    val question by questionViewModel.currentQuestion.collectAsState()
-
+fun GameScreenContent(
+    question: String?,
+    onNext: () -> Unit,
+    onRestart: () -> Unit
+){
     val infiniteTransition = rememberInfiniteTransition(label = "")
     val offset by infiniteTransition.animateFloat(
         initialValue = 0f,
@@ -112,16 +114,6 @@ fun GameScreen(
             val waveHeight = 60f
             val waveLength = size.width / 1.6f
             val step = 1.dp.toPx()
-
-            val brush = Brush.verticalGradient(
-                colors = listOf(
-                    waveColor.copy(alpha = 0.1f),
-                    waveColor.copy(alpha = 0.3f),
-                    waveColor.copy(alpha = 0.1f)
-                ),
-                startY = size.height * 0.5f,
-                endY = size.height
-            )
 
             val yOffsets = listOf(100f, 200f, 300f, 400f, 500f)
             val phaseShifts = listOf(0f, waveLength / 3, waveLength / 2, waveLength / 1.5f, waveLength)
@@ -167,7 +159,7 @@ fun GameScreen(
             verticalArrangement = Arrangement.Center
         ) {
             if (question != null) {
-                QuestionCard(text = question?.text)
+                QuestionCard(text = question)
             }
 
             Spacer(modifier = Modifier.height(32.dp))
@@ -178,7 +170,7 @@ fun GameScreen(
 
             if (question != null) {
                 Button(
-                    onClick = { questionViewModel.nextQuestion() },
+                    onClick = onNext,
                     modifier = buttonModifier,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primary,
@@ -192,7 +184,7 @@ fun GameScreen(
                 }
             } else {
                 Button(
-                    onClick = { questionViewModel.restartGame() },
+                    onClick = onRestart,
                     modifier = buttonModifier,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primary,
@@ -205,5 +197,32 @@ fun GameScreen(
                 }
             }
         }
+    }
+}
+
+@Composable
+fun GameScreen(
+    navController: NavController,
+    questionViewModel: QuestionViewModel = viewModel()
+) {
+    val question by questionViewModel.currentQuestion.collectAsState()
+
+    GameScreenContent(
+        question = question?.text,
+        onNext = { questionViewModel.nextQuestion() },
+        onRestart = { questionViewModel.restartGame() }
+    )
+}
+
+@Composable
+@Preview("Light Theme")
+@Preview("Dark Theme", uiMode = Configuration.UI_MODE_NIGHT_YES)
+fun GameScreenPreview(){
+    QpartyTheme {
+        GameScreenContent(
+            question = "Какое животное считается символом мудрости?",
+            onNext = {},
+            onRestart = {}
+        )
     }
 }

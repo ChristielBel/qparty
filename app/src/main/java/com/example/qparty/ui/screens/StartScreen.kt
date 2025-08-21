@@ -1,5 +1,6 @@
 package com.example.qparty.ui.screens
 
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,12 +21,16 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.qparty.R
+import com.example.qparty.ui.theme.QpartyTheme
 
 @Composable
-fun StartScreen(navController: NavController) {
+fun StartScreenContent(
+    onGame: () -> Unit
+) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -60,7 +65,7 @@ fun StartScreen(navController: NavController) {
             )
             Spacer(modifier = Modifier.height(48.dp))
             Button(
-                onClick = { navController.navigate("game") },
+                onClick = onGame,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(60.dp),
@@ -80,5 +85,22 @@ fun StartScreen(navController: NavController) {
                 )
             }
         }
+    }
+}
+
+@Composable
+fun StartScreen(navController: NavController) {
+    StartScreenContent(onGame = { navController.navigate("game") })
+}
+
+
+@Composable
+@Preview("Light Theme")
+@Preview("Dark Theme", uiMode = Configuration.UI_MODE_NIGHT_YES)
+fun StartScreenPreview(){
+    QpartyTheme {
+        StartScreenContent(
+            onGame = {}
+        )
     }
 }
