@@ -12,23 +12,24 @@ object QuestionRepository {
         "questions3.json"
     )
 
+    private var unusedQuestions: MutableList<Question> = mutableListOf()
+
     fun loadQuestions(context: Context, totalQuestions: Int = 15): List<Question> {
-        val allQuestionsPerFile = questionFiles.map { fileName ->
+        if (unusedQuestions.size < totalQuestions) {
+            unusedQuestions = loadAllQuestions(context).shuffled().toMutableList()
+        }
+
+        val selected = unusedQuestions.take(totalQuestions)
+        unusedQuestions = unusedQuestions.drop(totalQuestions).toMutableList()
+
+        return selected
+    }
+
+    private fun loadAllQuestions(context: Context): List<Question> {
+        return questionFiles.flatMap { fileName ->
             val inputStream = context.assets.open(fileName)
             val jsonString = inputStream.bufferedReader().use { it.readText() }
-            Json.decodeFromString<List<Question>>(jsonString).shuffled()
+            Json.decodeFromString<List<Question>>(jsonString)
         }
-
-        val questionsPerFile = totalQuestions / questionFiles.size
-        val remaining = totalQuestions % questionFiles.size
-
-        val selectedQuestions = mutableListOf<Question>()
-
-        allQuestionsPerFile.forEachIndexed { index, questions ->
-            val count = questionsPerFile + if (index < remaining) 1 else 0
-            selectedQuestions.addAll(questions.take(count))
-        }
-
-        return selectedQuestions.shuffled()
     }
 }
