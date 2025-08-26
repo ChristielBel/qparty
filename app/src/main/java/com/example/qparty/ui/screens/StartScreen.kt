@@ -25,11 +25,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.qparty.R
+import com.example.qparty.navigation.Routes
 import com.example.qparty.ui.theme.QpartyTheme
 
 @Composable
 fun StartScreenContent(
-    onGame: () -> Unit
+    onPlayers: () -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -65,7 +66,7 @@ fun StartScreenContent(
             )
             Spacer(modifier = Modifier.height(48.dp))
             Button(
-                onClick = onGame,
+                onClick = onPlayers,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(60.dp),
@@ -90,9 +91,8 @@ fun StartScreenContent(
 
 @Composable
 fun StartScreen(navController: NavController) {
-    StartScreenContent(onGame = { navController.navigate("game") })
+    StartScreenContent(onPlayers = { navController.navigate(Routes.PLAYERS) })
 }
-
 
 @Composable
 @Preview("Light Theme")
@@ -100,7 +100,7 @@ fun StartScreen(navController: NavController) {
 fun StartScreenPreview(){
     QpartyTheme {
         StartScreenContent(
-            onGame = {}
+            onPlayers = {}
         )
     }
 }

@@ -205,13 +205,24 @@ fun GameScreen(
     navController: NavController,
     questionViewModel: QuestionViewModel = viewModel()
 ) {
+    val firstPlayer = navController.previousBackStackEntry
+        ?.savedStateHandle
+        ?.get<String>("firstPlayer")
+
     val question by questionViewModel.currentQuestion.collectAsState()
 
-    GameScreenContent(
-        question = question?.text,
-        onNext = { questionViewModel.nextQuestion() },
-        onRestart = { questionViewModel.restartGame() }
-    )
+    Column {
+        if (firstPlayer != null) {
+            Text("Первым отвечает: $firstPlayer")
+            Spacer(Modifier.height(16.dp))
+        }
+
+        GameScreenContent(
+            question = question?.text,
+            onNext = { questionViewModel.nextQuestion() },
+            onRestart = { questionViewModel.restartGame() }
+        )
+    }
 }
 
 @Composable

@@ -5,11 +5,15 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.qparty.ui.screens.DiceRollScreen
 import com.example.qparty.ui.screens.GameScreen
+import com.example.qparty.ui.screens.PlayerSetupScreen
 import com.example.qparty.ui.screens.StartScreen
 
 object Routes {
     const val START = "start"
+    const val PLAYERS = "players"
+    const val DICE = "dice"
     const val GAME = "game"
 }
 
@@ -24,6 +28,8 @@ fun QuestionNavGraph(
         modifier = modifier
     ) {
         composable(Routes.START) { StartScreen(navController) }
+        composable(Routes.PLAYERS) {  PlayerSetupScreen(navController) }
+        composable(Routes.DICE) { DiceRollScreen(navController) }
         composable(Routes.GAME) { GameScreen(navController) }
     }
 }
