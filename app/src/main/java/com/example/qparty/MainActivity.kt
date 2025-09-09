@@ -58,7 +58,7 @@ fun QuestionGameApp(
         topBar = {
             TopAppBar(
                 navController = navController,
-                showBackButton = currentBackStackEntry.value?.destination?.route == Routes.GAME,
+                showBackButton = currentBackStackEntry.value?.destination?.route != Routes.START,
                 isDarkTheme = isDarkTheme,
                 onToggleTheme = onToggleTheme
             )
